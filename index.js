@@ -27,13 +27,20 @@ async function run() {
     const decorDB = client.db('decorDB') ;
     const craftItemsCollection = decorDB.collection('craftItemCollection') ;
 
-    app.get('/addCraftItem' , async (req , res) => {
+    app.get('/addCraftItem' , async (req , res) => { 
       const cursor = craftItemsCollection.find() ;
       const result = await cursor.toArray() ;
       res.send(result) ;
     })
 
     app.get('/addCraftItem/:id' , async (req , res) => {
+      const id = req.params.id ;
+      const query = {_id : new ObjectId(id)} ;
+      const result = await craftItemsCollection.findOne(query) ;
+      res.send(result) ;
+    })
+
+    app.get('/update/:id' , async (req , res) => {
       const id = req.params.id ;
       const query = {_id : new ObjectId(id)} ;
       const result = await craftItemsCollection.findOne(query) ;
@@ -53,6 +60,38 @@ async function run() {
         console.log(itemInfo);
         const result = await craftItemsCollection.insertOne(itemInfo) ;
         res.send(result) ;
+    })
+
+    app.put('/update/:id' , async (req , res) => {
+      const id = req.params.id ;
+      const updatedData = req.body ;
+
+      const filter = {_id : new ObjectId(id)} ;
+      const options = { upsert: true };
+
+      const updatedItem = {
+        $set: {
+          itemName : updatedData.itemName ,
+          subName : updatedData.subName ,
+          image : updatedData.image ,
+          shortDesc : updatedData.shortDesc ,
+          processing : updatedData.processing ,
+          price : updatedData.price ,
+          rating : updatedData.rating ,
+          stockStatus : updatedData.stockStatus ,
+          customization : updatedData.customization
+        },
+      };
+
+      const result = await craftItemsCollection.updateOne(filter, updatedItem, options);
+      res.send(result) ;
+    })
+
+    app.delete('/myListDelete/:id' , async (req , res) => {
+      const id = req.params.id ;
+      const filter = {_id : new ObjectId(id)} ;
+      const result = await craftItemsCollection.deleteOne(filter) ;
+      res.send(result) ;
     })
 
     // Connect the client to the server	(optional starting in v4.7)
