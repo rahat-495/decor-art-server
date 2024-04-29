@@ -26,6 +26,7 @@ async function run() {
 
     const decorDB = client.db('decorDB') ;
     const craftItemsCollection = decorDB.collection('craftItemCollection') ;
+    const subCategorieCollection = decorDB.collection('subCategorieCollection')
 
     app.get('/addCraftItem' , async (req , res) => { 
       const cursor = craftItemsCollection.find() ;
@@ -46,6 +47,20 @@ async function run() {
       const result = await craftItemsCollection.findOne(query) ;
       res.send(result) ;
     })
+
+    app.get('/subCategorie/:value' , async (req , res) => {
+      const subCategorie = req.params.value ;
+      const filter = {subName : subCategorie} ;
+      const cursor = subCategorieCollection.find(filter) ;
+      const result = await cursor.toArray() ;
+      res.send(result) ;
+    })
+
+    app.get('/subCategorie' , async (req , res) => {
+      const cursor = subCategorieCollection.find() ;
+      const result = await cursor.toArray() ;
+      res.send(result) ;
+    })
     
     app.get('/myList/:email' , async (req , res) => {
       const email = req.params.email ;
@@ -58,6 +73,7 @@ async function run() {
     app.post('/addCraftItem' , async (req , res) => {
         const itemInfo = req.body ;
         console.log(itemInfo);
+        const subResult = await subCategorieCollection.insertOne(itemInfo) ;
         const result = await craftItemsCollection.insertOne(itemInfo) ;
         res.send(result) ;
     })
