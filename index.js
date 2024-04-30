@@ -99,7 +99,8 @@ async function run() {
         },
       };
 
-      const result = await craftItemsCollection.updateOne(filter, updatedItem, options);
+      const subResult = await subCategorieCollection.updateOne(filter , updatedItem , options)
+      const result = await craftItemsCollection.updateOne(filter , updatedItem , options);
       res.send(result) ;
     })
 
