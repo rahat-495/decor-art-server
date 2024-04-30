@@ -106,6 +106,7 @@ async function run() {
     app.delete('/myListDelete/:id' , async (req , res) => {
       const id = req.params.id ;
       const filter = {_id : new ObjectId(id)} ;
+      const subResult = await subCategorieCollection.deleteOne(filter) ;
       const result = await craftItemsCollection.deleteOne(filter) ;
       res.send(result) ;
     })
